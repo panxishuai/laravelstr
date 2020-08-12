@@ -59,4 +59,19 @@ class UserController extends Controller
             return back();
         }
     }
+    public function del($id)
+    {
+        $user = User::find($id);
+        if ($user->delete()) {
+            return [
+                'status' => 0,
+                'message' => '删除成功'
+            ];
+        } else {
+            return json_encode([
+                'status' => 1,
+                'message' => '删除失败'
+            ]);
+        }
+    }
 }
