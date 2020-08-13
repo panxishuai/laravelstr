@@ -16,5 +16,6 @@ class Islogin
     public function handle($request, Closure $next)
     {
         return $next($request);
+        echo 1;
     }
 }
