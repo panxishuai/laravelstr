@@ -25,9 +25,15 @@ class LoginController extends Controller
         $vcode = new Vcode();
         return $vcode->aaa();
     }
+    /**
+     * 登陆方法
+     */
     public function doLogin(Request $request)
     {
         $data = $request->except('_token');
+        if ($data['code'] != session()->get('captcha')) {
+            return redirect('admin/login')->with('errors', '验证码错误!');
+        }
         $rule = [
             'username' => 'required|alpha|max:10',
             'password' => 'required'
@@ -48,9 +54,19 @@ class LoginController extends Controller
         if (!$user) {
             return redirect('admin/login')->with('errors', '用户不存在');
         }
-        if ($data['username'] != Crypt::decrypt($user->user_name)) {
+        if ($data['password'] != Crypt::decrypt($user->user_pass)) {
             return redirect('admin/login')->with('errors', '密码不正确！');
         }
+        session()->put('user', $user);
+        return redirect('admin/index');
+    }
+    /**
+     * 退出登陆
+     */
+    public function logout()
+    {
+        session()->flush();
+        return redirect('admin/login');
     }
     public function jiami()
     {
@@ -67,9 +83,9 @@ class LoginController extends Controller
         // }
         // 3、crypt加密
         $str = '123456';
-        $crypt = Crypt::encrypt($str);
-        // $crypt_str = "eyJpdiI6IjNcL3BrZm5wQWNoNWhETGh6RE1vSXNRPT0iLCJ2YWx1ZSI6IjIycE1zRmFLK3NjUkR4d2pcL29ZMkh3PT0iLCJtYWMiOiIwZTBkM2M3ZGRjZjA5MjQ4OTE0OTE3ODQxYTI0MDU1ZjRhODUwODRmODYzZGUwNWQ1ZTM5NmZiMTE1MzIxYTAzIn0=";
-        // return  Crypt::decrypt($crypt);
-        return $crypt;
+        $crypt = Crypt::encrypt($str); //加密
+        $crypt_str = "eyJpdiI6IjYzVCtVaUFRdmt6OWNscWFBcFpuamc9PSIsInZhbHVlIjoiMXRqb21jdXVNcjR3WGFxSThCYnZRQT09IiwibWFjIjoiZmNhY2JiMjA3N2QxYmI1ZmM2NWRmMWIxNDdkMjdiNWQxZjkzZjg0MGMzMzY1NmI0ZGE2NTllNzE4M2U3YjJiNCJ9=";
+        return  Crypt::decrypt($crypt_str); //解密
+        // return $crypt;
     }
 }

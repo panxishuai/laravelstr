@@ -1,4 +1,7 @@
 <?php
+
+// use Illuminate\Routing\Route;
+
 error_reporting(0);
 /*
 |--------------------------------------------------------------------------
@@ -17,27 +20,28 @@ error_reporting(0);
 
 // use Illuminate\Routing\Route;
 
-//用户添加路由
-Route::get('user/add', 'UserController@add');
-//添加操作
-Route::post('user/store', 'UserController@store');
-//用户列表页面路由
-Route::get('user/index', 'UserController@index');
-//修改页面
-Route::get('user/edit/{id}', 'UserController@edit');
-//修改方法路由
-Route::post('user/update', 'UserController@update');
 
-//删除方法路由
-Route::get('user/del/{id}', 'UserController@del');
+Route::group(['prefix' => 'admin', 'namespace' => 'Admin',], function () {
+    //登陆页面
+    Route::get('login', 'LoginController@login');
 
-//登陆页面
-Route::get('admin/login', 'Admin\LoginController@login');
+    //生成验证码
+    Route::get('code', 'LoginController@code');
 
-//生成验证码
-Route::get('admin/code', 'Admin\LoginController@code');
+    //登陆方法
+    Route::post('dologin', 'LoginController@doLogin');
 
-//登陆方法
-Route::post('admin/dologin', 'Admin\LoginController@doLogin');
+    //加密测试
+    Route::get('jiami', 'LoginController@jiami');
+});
 
-Route::get('admin/jiami', 'Admin\LoginController@jiami');
+Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 'Islogin'], function () {
+    //后台首页
+    Route::get('index', 'IndexController@index');
+
+    //后台欢迎页
+    Route::get('welcome', 'IndexController@welcome');
+
+    //退出登陆
+    Route::get('logout', 'LoginController@logout');
+});

@@ -22,7 +22,7 @@
     <div class="login layui-anim layui-anim-up">
         <div class="message">管理登录</div>
         <div id="darkbannerwrap"></div>
-        @if(is_object($errors))
+        <!-- @if(is_object($errors))
         @if (count($errors) > 0)
         <div class="alert alert-danger">
             <ul>
@@ -34,7 +34,7 @@
         @endif
         @else
         <li>{{ $errors }}</li>
-        @endif
+        @endif -->
         <form method="post" class="layui-form" action="{{ url('admin/dologin') }}">
             {{ csrf_field() }}
             <input name="username" placeholder="用户名" type="text" lay-verify="required" class="layui-input">
@@ -52,6 +52,19 @@
     <script>
         $(function() {
             layui.use('form', function() {
+
+                var a = "<?php
+                            if (is_object($errors)) {
+                                if ((count($errors) > 0)) {
+                                    echo $errors[0];
+                                }
+                            } else {
+                                echo $errors;
+                            }
+                            ?>";
+                if (a) {
+                    layer.msg(a);
+                }
                 var form = layui.form;
                 form.on('submit(login)', function(data) {
 

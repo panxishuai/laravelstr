@@ -40,7 +40,8 @@ class Vcode
             imagesetpixel($image, rand(1, 99), rand(1, 29), $pointcolor);
         }
         //保存到session中
-        $_SESSION["captcha"] = $captcha;
+        // $_SESSION["captcha"] = $captcha;
+        session()->put('captcha', $captcha);
         //输出图片
         header("content-type:image/png");
         imagepng($image);
